@@ -16,7 +16,7 @@ GQL <- function(query, .url = url){
 article_query <- '{
   viewer {
     recommendation {
-      feed: newest(input: {first: 20}) {
+      feed: newest(input: {first: 30}) {
         edges {
     			node {
               id
@@ -73,8 +73,8 @@ colnames(article) = c('id', 'title', 'slug', 'createdAt', 'state',
                       'responseCount', 'author_id', 'author_userName',
                       'author_displayName')
 
-article$createdAt = strptime(article$createdAt, "%Y-%m-%dT%H:%M:%OS")
-
+article$createdAt = strptime(article$createdAt, "%Y-%m-%dT%H:%M:%OS", tz = "Asia/Shanghai")
 NewestFeed <- read_csv("csv/NewestFeed.csv")
 NewestFeed <- unique(rbind(NewestFeed,article))
+NewestFeed = NewestFeed[!duplicated(NewestFeed$dataHash), ]
 write_csv(NewestFeed, "csv/NewestFeed.csv")

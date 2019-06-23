@@ -81,9 +81,9 @@ server <- function(input, output, session) {
         names(NewestFeed) = c('創建時間', '標題', 'ipfs地址', '作者', '字數', '簡介')
         
         
-        DT::datatable(NewestFeed, escape = FALSE,
+        DT::datatable(NewestFeed, escape = FALSE, rownames = F,
                       options = list(
-                          order = list(1, 'desc'),
+                          order = list(0, 'desc'),
                           pageLength = 50))
     })
     
