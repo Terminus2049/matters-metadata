@@ -7,27 +7,27 @@ library(readr)
 AllAuthors <- read_csv("csv/AllAuthors.csv")
 AllTags <- read_csv("csv/AllTags.csv")
 NewestFeed <- read_csv("csv/NewestFeed.csv")
-
+NewestFeed = NewestFeed[, c(1:11,15:17)]
+NewestFeed = unique(NewestFeed)
 
 # NewestFeed -----------------------------------------------------------
 
-NewestFeed$url = paste0('<a href="https://matters.news/@', 
+NewestFeed$title = paste0('<a href="https://matters.news/@', 
                         NewestFeed$author_userName,
                        "/", NewestFeed$slug, "-", NewestFeed$mediaHash,
-                        '" target="_blank" class="btn">原文</a>')
+                        '" target="_blank">',NewestFeed$title,'</a>')
 
 NewestFeed$author_displayName = paste0('<a href="https://matters.news/@',
                                       NewestFeed$author_userName, 
-                                      '" target="_blank" class="btn">',
+                                      '" target="_blank">',
                                       NewestFeed$author_displayName, '</a>')
 NewestFeed$dataHash = paste0('<a href="https://d26g9c7mfuzstv.cloudfront.net/ipfs/',
                                       NewestFeed$dataHash,
-                                      '" target="_blank" class="btn">ipfs</a>')
+                                      '" target="_blank">ipfs</a>')
 
-NewestFeed = NewestFeed[, c(4,18,11,2,17,12,14,13,10,8)]
+NewestFeed = NewestFeed[, c(4,2,11,14,10,8)]
 
-names(NewestFeed) = c('创建时间', '原文地址', 'ipfs地址', '标题', 
-                     '作者', 'MAT', '回应数', '评论数', '字数', '简介')
+names(NewestFeed) = c('創建時間', '標題', 'ipfs地址', '作者', '字數', '簡介')
 
 
 # AllAuthors -----------------------------------------------------------------
