@@ -6,28 +6,6 @@ library(readr)
 
 AllAuthors <- read_csv("csv/AllAuthors.csv")
 AllTags <- read_csv("csv/AllTags.csv")
-NewestFeed <- read_csv("csv/NewestFeed.csv")
-NewestFeed = NewestFeed[, c(1:11,15:17)]
-NewestFeed = unique(NewestFeed)
-
-# NewestFeed -----------------------------------------------------------
-
-NewestFeed$title = paste0('<a href="https://matters.news/@', 
-                        NewestFeed$author_userName,
-                       "/", NewestFeed$slug, "-", NewestFeed$mediaHash,
-                        '" target="_blank">',NewestFeed$title,'</a>')
-
-NewestFeed$author_displayName = paste0('<a href="https://matters.news/@',
-                                      NewestFeed$author_userName, 
-                                      '" target="_blank">',
-                                      NewestFeed$author_displayName, '</a>')
-NewestFeed$dataHash = paste0('<a href="https://d26g9c7mfuzstv.cloudfront.net/ipfs/',
-                                      NewestFeed$dataHash,
-                                      '" target="_blank">ipfs</a>')
-
-NewestFeed = NewestFeed[, c(4,2,11,14,10,8)]
-
-names(NewestFeed) = c('創建時間', '標題', 'ipfs地址', '作者', '字數', '簡介')
 
 
 # AllAuthors -----------------------------------------------------------------
@@ -74,8 +52,34 @@ ui <- function(input, output, session){
 # server ------------------------------------------------------------------
 
 server <- function(input, output, session) {
+  
+    # NewestFeed -----------------------------------------------------------
+    
+    NewestFeed = reactiveFileReader(120000, session, 'csv/NewestFeed.csv', read_csv)
     
     output$table1 <- DT::renderDataTable({
+        
+        NewestFeed = NewestFeed()
+        NewestFeed = NewestFeed[, c(1:11,15:17)]
+        NewestFeed = unique(NewestFeed)
+        
+        NewestFeed$title = paste0('<a href="https://matters.news/@', 
+                                  NewestFeed$author_userName,
+                                  "/", NewestFeed$slug, "-", NewestFeed$mediaHash,
+                                  '" target="_blank">',NewestFeed$title,'</a>')
+        
+        NewestFeed$author_displayName = paste0('<a href="https://matters.news/@',
+                                               NewestFeed$author_userName, 
+                                               '" target="_blank">',
+                                               NewestFeed$author_displayName, '</a>')
+        NewestFeed$dataHash = paste0('<a href="https://d26g9c7mfuzstv.cloudfront.net/ipfs/',
+                                     NewestFeed$dataHash,
+                                     '" target="_blank">ipfs</a>')
+        
+        NewestFeed = NewestFeed[, c(4,2,11,14,10,8)]
+        
+        names(NewestFeed) = c('創建時間', '標題', 'ipfs地址', '作者', '字數', '簡介')
+        
         
         DT::datatable(NewestFeed, escape = FALSE,
                       options = list(
