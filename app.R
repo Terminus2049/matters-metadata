@@ -43,7 +43,10 @@ ui <- function(input, output, session){
         
         tabPanel('Tags',
                  DT::dataTableOutput("table3")
-        )
+        ),
+        
+        tabPanel('Download',
+                 downloadButton("downloadData", "Download"))
         
     )
 }
@@ -99,6 +102,13 @@ server <- function(input, output, session) {
                       options = list(pageLength = 50))
     })
     
+    output$downloadData <- downloadHandler(
+      
+      filename = paste0("matters-", Sys.Date(), ".csv"),
+      content = function(file) {
+        write.csv(NewestFeed(), file, row.names = FALSE)
+      }
+    )
 }
 
 
