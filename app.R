@@ -19,7 +19,7 @@ AllAuthors$displayName = paste0('<a href="https://matters.news/@',
 
 # AllTags -----------------------------------------------------------------
 
-AllTags$content = paste0('<a href="https://matters.news/',
+AllTags$content = paste0('<a href="https://matters.news/tags/',
                          AllTags$id,
                          '" target="_blank" class="btn">',
                          AllTags$content, '</a>')
@@ -75,13 +75,18 @@ server <- function(input, output, session) {
                                                NewestFeed$author_userName, 
                                                '" target="_blank">',
                                                NewestFeed$author_displayName, '</a>')
-        NewestFeed$dataHash = paste0('<a href="https://contributionls.github.io/public-gateway-checker/?cid=',
+        
+        NewestFeed$datahash = paste0('<a href="http://206.189.252.32:8080/ipfs/',
+                                    NewestFeed$dataHash,
+                                    '" target="_blank">ipfs</a>')
+        
+        NewestFeed$checker = paste0('<a href="https://contributionls.github.io/public-gateway-checker/?cid=',
                                      NewestFeed$dataHash,
-                                     '" target="_blank">ipfs</a>')
+                                     '" target="_blank">checker</a>')
         
-        NewestFeed = NewestFeed[, c(4,2,11,14,10,8)]
+        NewestFeed = NewestFeed[, c(4,2,16,15,14,10,8)]
         
-        names(NewestFeed) = c('創建時間', '標題', 'ipfs地址', '作者', '字數', '簡介')
+        names(NewestFeed) = c('創建時間', '標題', 'ipfs有效地址检测', '本站网关', '作者', '字數', '簡介')
         
         
         DT::datatable(NewestFeed, escape = FALSE, rownames = F,
