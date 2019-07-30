@@ -75,7 +75,7 @@ server <- function(input, output, session) {
                                                NewestFeed$author_userName, 
                                                '" target="_blank">',
                                                NewestFeed$author_displayName, '</a>')
-        NewestFeed$dataHash = paste0('<a href="https://d26g9c7mfuzstv.cloudfront.net/ipfs/',
+        NewestFeed$dataHash = paste0('<a href="https://contributionls.github.io/public-gateway-checker/?cid=',
                                      NewestFeed$dataHash,
                                      '" target="_blank">ipfs</a>')
         
