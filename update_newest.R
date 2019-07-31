@@ -2,7 +2,7 @@ library(httr)
 library(jsonlite)
 library(readr)
 
-url <- "https://server.matters.news/"
+url <- "https://server.matters.news/graphql/"
 GQL <- function(query, .url = url){
   pbody <- list(query = query)
   res <- POST(.url, body = pbody, encode="json")
