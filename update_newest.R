@@ -1,5 +1,6 @@
-require(httr)
-require(jsonlite)
+library(httr)
+library(jsonlite)
+library(readr)
 
 url <- "https://server.matters.news/graphql/"
 
