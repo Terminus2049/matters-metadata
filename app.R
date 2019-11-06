@@ -58,25 +58,28 @@ server <- function(input, output, session) {
   
     # NewestFeed -----------------------------------------------------------
     
-    NewestFeed = reactiveFileReader(120000, session, 'csv/NewestFeed.csv', read_csv)
+    NewestFeed = reactiveFileReader(120000, session, 'csv/NewestFeed2.csv', read_csv)
     
     output$table1 <- DT::renderDataTable({
         
         NewestFeed = NewestFeed()
-        NewestFeed = NewestFeed[, c(1:11,15:17)]
+        NewestFeed = NewestFeed[, c('userName', 'displayName','slug', 'mediaHash',
+                                    'title', 'dataHash', 'createdAt', 'summary')]
         NewestFeed = unique(NewestFeed)
         
+        NewestFeed$createdAt = NewestFeed$createdAt + 8 * 3600
+        
         NewestFeed$title = paste0('<a href="https://matters.news/@', 
-                                  NewestFeed$author_userName,
+                                  NewestFeed$userName,
                                   "/", NewestFeed$slug, "-", NewestFeed$mediaHash,
                                   '" target="_blank">',NewestFeed$title,'</a>')
         
-        NewestFeed$author_displayName = paste0('<a href="https://matters.news/@',
-                                               NewestFeed$author_userName, 
+        NewestFeed$displayName = paste0('<a href="https://matters.news/@',
+                                               NewestFeed$userName, 
                                                '" target="_blank">',
-                                               NewestFeed$author_displayName, '</a>')
+                                               NewestFeed$displayName, '</a>')
         
-        NewestFeed$datahash = paste0('<a href="http://206.189.252.32:8080/ipfs/',
+        NewestFeed$node = paste0('<a href="http://206.189.252.32:8080/ipfs/',
                                     NewestFeed$dataHash,
                                     '" target="_blank">ipfs</a>')
         
@@ -84,9 +87,11 @@ server <- function(input, output, session) {
                                      NewestFeed$dataHash,
                                      '" target="_blank">checker</a>')
         
-        NewestFeed = NewestFeed[, c(4,2,16,15,14,10,8)]
+        NewestFeed = NewestFeed[, c('createdAt', 'title', 'checker', 'node',
+                                    'displayName', 'summary')]
         
-        names(NewestFeed) = c('創建時間', '標題', 'ipfs有效地址检测', '本站网关', '作者', '字數', '簡介')
+        names(NewestFeed) = c('創建時間', '標題', 'ipfs有效地址檢測', '本站node',
+                              '作者', '簡介')
         
         
         DT::datatable(NewestFeed, escape = FALSE, rownames = F,

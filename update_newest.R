@@ -17,41 +17,47 @@ res <- content(res, as = "parsed", encoding = "UTF-8")
 
 newest_list = res$data$viewer$recommendation$feed$edges
 
-article = newest_list[[1]]$node
-article = c(article[1:3],article[5:16])
-article = as.data.frame(unlist(article[1:14]))
-for (i in 2:length(newest_list)) {
-  print(i)
-  x = newest_list[[i]]$node
-  x = c(x[1:3],x[5:16])
-  df = as.data.frame(unlist(x[1:14]))
-  article = cbind(article, df)
+get_df = function(article){
+  id = article$id
+  title = article$title
+  slug = article$slug
+  cover = ifelse(is.null(article$cover), NA, article$cover)
+  summary = article$summary
+  mediaHash = article$mediaHash
+  live = article$live
+  userId = article$author$id
+  userName = article$author$userName
+  displayName = article$author$displayName
+  avatar = ifelse(is.null(article$author$avatar), NA, article$author$avatar)
+  createdAt = article$createdAt
+  appreciationsReceivedTotal = article$appreciationsReceivedTotal
+  responseCount = article$responseCount
+  subscribed = article$subscribed
+  state = article$state
+  dataHash = article$dataHash
+  sticky = article$sticky
+  
+  data.frame(id, title, slug, cover, summary, mediaHash, live, userId, 
+             userName, displayName, avatar, createdAt, appreciationsReceivedTotal,
+             responseCount, subscribed, state, dataHash, sticky)
 }
 
-article = t(article)
-row.names(article) = NULL
-article = as.data.frame(article)
-article$public = NA
-article$wordCount = NA
-article$MAT = NA
-article$commentCount = NA
-article$responseCount = NA
+df = get_df(newest_list[[1]]$node)
+for (i in 2:10) {
+  article = newest_list[[i]]$node
+  df = rbind(df,get_df(article))
+}
+
+df$createdAt = strptime(df$createdAt, "%Y-%m-%dT%H:%M:%OS", tz = "Asia/Shanghai")
 
 
+NewestFeed2 <- read_csv("csv/NewestFeed2.csv", 
+                        col_types = cols(appreciationsReceivedTotal = col_double(), 
+                                         avatar = col_character(), 
+                                         cover = col_character()))
 
-article = article[,c(1,2,3,12,17,19,6,4,5,20,18,21,22,15,7,8,9)]
-
-
-colnames(article) = c('id', 'title', 'slug', 'createdAt', 'state',
-                      'public', 'live', 'summary', 'mediaHash', 
-                      'wordCount', 'dataHash', 'MAT', 'commentCount',
-                      'responseCount', 'author_id', 'author_userName',
-                      'author_displayName')
-
-article$createdAt = strptime(article$createdAt, "%Y-%m-%dT%H:%M:%OS", tz = "Asia/Shanghai")
-NewestFeed <- read_csv("csv/NewestFeed.csv")
-NewestFeed <- unique(rbind(NewestFeed,article))
-NewestFeed = NewestFeed[!duplicated(NewestFeed$dataHash), ]
-write_csv(NewestFeed, "csv/NewestFeed.csv")
+NewestFeed2 <- unique(rbind(NewestFeed2,df))
+NewestFeed2 = NewestFeed2[!duplicated(NewestFeed2$dataHash), ]
+write_csv(NewestFeed2, "csv/NewestFeed2.csv")
 
 
